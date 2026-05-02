@@ -6,13 +6,14 @@ import { LanguageSelector } from './language-selector'
 import { VariantSelector } from './variant-selector'
 import { TestQuestion } from './test-question'
 import { TestResults } from './test-results'
+import { TestHistory } from './test-history'
 import { StudentInfo, TestResult } from '@/lib/types'
 import { getCorrectAnswers, calculateScore, calculatePercentage } from '@/lib/test-data'
-import { GraduationCap, Settings } from 'lucide-react'
+import { GraduationCap, Settings, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { testDatabase } from '@/lib/database'
 
-type Step = 'register' | 'language' | 'variant' | 'test' | 'results'
+type Step = 'register' | 'language' | 'variant' | 'test' | 'results' | 'history'
 
 const TOTAL_QUESTIONS = 25
 
@@ -80,12 +81,23 @@ export function TestApp() {
       answers,
     }
 
-    // Сохраняем в локальную базу данных
+    // Сохраняем результат в localStorage
     testDatabase.saveResult(testResult)
-
     setResult(testResult)
     setStep('results')
     setIsSubmitting(false)
+  }
+
+  const handleViewHistory = () => {
+    setStep('history')
+  }
+
+  const handleSelectHistoryTest = (selectedResult: TestResult, correctAnswers: string[]) => {
+    setResult(selectedResult)
+    setLanguage(selectedResult.language)
+    setVariant(selectedResult.variant)
+    setAnswers(selectedResult.answers)
+    setStep('results')
   }
 
   const handleRestart = () => {
@@ -109,9 +121,18 @@ export function TestApp() {
               <p className="text-xs text-muted-foreground">Дене мәдениеті / Физическая культура</p>
             </div>
           </div>
-          <Link href="/admin" className="p-2 hover:bg-muted rounded-md transition-colors" title="Результаты">
-            <Settings className="w-5 h-5 text-muted-foreground" />
-          </Link>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={handleViewHistory}
+              className="p-2 hover:bg-muted rounded-md transition-colors" 
+              title="История тестов"
+            >
+              <Clock className="w-5 h-5 text-muted-foreground" />
+            </button>
+            <Link href="/admin" className="p-2 hover:bg-muted rounded-md transition-colors" title="Результаты">
+              <Settings className="w-5 h-5 text-muted-foreground" />
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -148,6 +169,13 @@ export function TestApp() {
             correctAnswers={getCorrectAnswers(language, variant)}
             onRestart={handleRestart}
             language={language}
+          />
+        )}
+
+        {step === 'history' && (
+          <TestHistory
+            language={language}
+            onSelectTest={handleSelectHistoryTest}
           />
         )}
       </main>

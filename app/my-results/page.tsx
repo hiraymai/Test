@@ -44,7 +44,9 @@ export default function MyResultsPage() {
     setLoading(true)
     try {
       const allResults = testDatabase.getAllResults()
+      console.log('Все результаты:', allResults)
       const studentResults = allResults.filter(result => result.fullName === name)
+      console.log('Результаты студента:', studentResults)
       setResults(studentResults)
     } catch (error) {
       console.error('Failed to fetch results:', error)
@@ -72,6 +74,7 @@ export default function MyResultsPage() {
   }
 
   const handleShowErrorAnalysis = (result: Result) => {
+    console.log('Нажат разбор для результата:', result)
     setSelectedResult(result)
     setShowErrorAnalysis(true)
   }

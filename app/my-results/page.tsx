@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { RefreshCw, ArrowLeft, User } from 'lucide-react'
+import { RefreshCw, ArrowLeft, User, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { testDatabase } from '@/lib/database'
+import { ErrorAnalysis } from '@/components/error-analysis'
 
 interface Result {
   id?: string
@@ -17,6 +18,7 @@ interface Result {
   score: number
   totalQuestions: number
   percentage: number
+  answers: string[]
   createdAt?: string
 }
 
@@ -24,6 +26,8 @@ export default function MyResultsPage() {
   const [results, setResults] = useState<Result[]>([])
   const [loading, setLoading] = useState(true)
   const [studentName, setStudentName] = useState('')
+  const [selectedResult, setSelectedResult] = useState<Result | null>(null)
+  const [showErrorAnalysis, setShowErrorAnalysis] = useState(false)
 
   useEffect(() => {
     // Получаем имя студента из localStorage
@@ -67,6 +71,16 @@ export default function MyResultsPage() {
     )
   }
 
+  const handleShowErrorAnalysis = (result: Result) => {
+    setSelectedResult(result)
+    setShowErrorAnalysis(true)
+  }
+
+  const handleBackToResults = () => {
+    setShowErrorAnalysis(false)
+    setSelectedResult(null)
+  }
+
   if (!studentName) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -89,6 +103,15 @@ export default function MyResultsPage() {
           </CardContent>
         </Card>
       </div>
+    )
+  }
+
+  if (showErrorAnalysis && selectedResult) {
+    return (
+      <ErrorAnalysis 
+        result={selectedResult} 
+        onBack={handleBackToResults}
+      />
     )
   }
 
@@ -176,6 +199,7 @@ export default function MyResultsPage() {
                       <th className="text-center py-3 px-2">Вариант</th>
                       <th className="text-center py-3 px-2">Баллы</th>
                       <th className="text-center py-3 px-2">Результат</th>
+                      <th className="text-center py-3 px-2">Действия</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -197,6 +221,17 @@ export default function MyResultsPage() {
                           <span className={`px-2 py-1 rounded font-semibold ${getGradeColor(result.percentage)}`}>
                             {result.percentage}%
                           </span>
+                        </td>
+                        <td className="py-3 px-2 text-center">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleShowErrorAnalysis(result)}
+                            className="flex items-center gap-1"
+                          >
+                            <AlertCircle className="w-4 h-4" />
+                            Разбор
+                          </Button>
                         </td>
                       </tr>
                     ))}

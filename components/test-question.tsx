@@ -43,7 +43,7 @@ export function TestQuestion({
   const currentQuestionData = questions[currentQuestion]
 
   return (
-    <Card className="w-full max-w-lg mx-auto">
+    <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <div className="flex items-center justify-between mb-2">
           <CardTitle className="text-lg">
@@ -56,8 +56,8 @@ export function TestQuestion({
         <Progress value={progress} className="h-2" />
       </CardHeader>
       <CardContent className="flex flex-col gap-6 max-w-4xl mx-auto w-full">
-        <div className="text-center">
-          <p className="text-lg font-medium mb-4 break-words">
+        <div className="text-center px-4">
+          <p className="text-lg font-medium mb-4 break-words leading-relaxed">
             {currentQuestionData?.question || ''}
           </p>
           <p className="text-sm text-muted-foreground">{selectLabel}</p>
@@ -74,7 +74,7 @@ export function TestQuestion({
             >
               <div className="flex items-start gap-3 w-full">
                 <span className="font-bold text-lg min-w-[30px] flex-shrink-0">{option}.</span>
-                <span className="text-sm break-words flex-1">{text}</span>
+                <span className="text-sm break-words flex-1 leading-relaxed whitespace-pre-wrap">{text}</span>
               </div>
             </Button>
           ))}

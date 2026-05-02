@@ -8,7 +8,7 @@ import { TestQuestion } from './test-question'
 import { TestResults } from './test-results'
 import { StudentInfo, TestResult } from '@/lib/types'
 import { getCorrectAnswers, calculateScore, calculatePercentage } from '@/lib/test-data'
-import { GraduationCap, Settings } from 'lucide-react'
+import { GraduationCap, Play, Trophy, RotateCcw, Settings, User } from 'lucide-react'
 import Link from 'next/link'
 import { testDatabase } from '@/lib/database'
 
@@ -26,8 +26,10 @@ export function TestApp() {
   const [result, setResult] = useState<TestResult | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleStudentSubmit = (info: StudentInfo) => {
-    setStudentInfo(info)
+  const handleStudentSubmit = (studentInfo: StudentInfo) => {
+    setStudentInfo(studentInfo)
+    // Сохраняем имя студента в localStorage для личного кабинета
+    localStorage.setItem('studentName', studentInfo.fullName)
     setStep('language')
   }
 
@@ -109,7 +111,10 @@ export function TestApp() {
               <p className="text-xs text-muted-foreground">Дене мәдениеті / Физическая культура</p>
             </div>
           </div>
-          <Link href="/admin" className="p-2 hover:bg-muted rounded-md transition-colors" title="Результаты">
+          <Link href="/my-results" className="p-2 hover:bg-muted rounded-md transition-colors" title="Мои результаты">
+            <User className="w-5 h-5 text-muted-foreground" />
+          </Link>
+          <Link href="/admin" className="p-2 hover:bg-muted rounded-md transition-colors" title="Админ-панель">
             <Settings className="w-5 h-5 text-muted-foreground" />
           </Link>
         </div>

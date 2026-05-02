@@ -7,6 +7,8 @@ import { RefreshCw, ArrowLeft, Download } from 'lucide-react'
 import Link from 'next/link'
 import { testDatabase } from '@/lib/database'
 
+const ADMIN_PASSWORD = 'teacher123' // Поменяйте на свой пароль
+
 interface Result {
   id?: string
   fullName: string
@@ -23,6 +25,20 @@ interface Result {
 export default function AdminPage() {
   const [results, setResults] = useState<Result[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (password === ADMIN_PASSWORD) {
+      setIsAuthenticated(true)
+      setError('')
+      fetchResults()
+    } else {
+      setError('Неверный пароль')
+    }
+  }
 
   const fetchResults = () => {
     setLoading(true)
@@ -36,8 +52,10 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    fetchResults()
-  }, [])
+    if (isAuthenticated) {
+      fetchResults()
+    }
+  }, [isAuthenticated])
 
   const exportToCSV = () => {
     const headers = ['ФИО', 'Группа', 'Дата', 'Язык', 'Вариант', 'Баллы', 'Процент', 'Время']
@@ -70,29 +88,64 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Назад
-              </Button>
-            </Link>
-            <h1 className="font-bold text-lg">Результаты тестирования</h1>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={fetchResults} disabled={loading}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Обновить
-            </Button>
-            <Button variant="outline" size="sm" onClick={exportToCSV} disabled={results.length === 0}>
-              <Download className="w-4 h-4 mr-2" />
-              Экспорт CSV
-            </Button>
-          </div>
+      {!isAuthenticated ? (
+        // Экран входа
+        <div className="min-h-screen flex items-center justify-center">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-center">Вход в админ-панель</CardTitle>
+              <p className="text-sm text-muted-foreground text-center">
+                Только для преподавателей
+              </p>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Пароль</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full mt-1 px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                    placeholder="Введите пароль"
+                  />
+                </div>
+                {error && (
+                  <p className="text-sm text-destructive">{error}</p>
+                )}
+                <Button type="submit" className="w-full">
+                  Войти
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
-      </header>
+      ) : (
+        // Админ-панель
+        <>
+          <header className="border-b bg-card">
+            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Link href="/">
+                  <Button variant="ghost" size="sm">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Назад
+                  </Button>
+                </Link>
+                <h1 className="font-bold text-lg">Результаты тестирования</h1>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={fetchResults} disabled={loading}>
+                  <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                  Обновить
+                </Button>
+                <Button variant="outline" size="sm" onClick={exportToCSV} disabled={results.length === 0}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Экспорт CSV
+                </Button>
+              </div>
+            </div>
+          </header>
 
       <main className="container mx-auto px-4 py-8">
         <Card>
@@ -158,6 +211,8 @@ export default function AdminPage() {
           </CardContent>
         </Card>
       </main>
+        </>
+      )}
     </div>
   )
 }

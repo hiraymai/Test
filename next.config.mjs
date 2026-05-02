@@ -9,9 +9,6 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   distDir: 'out',
-  experimental: {
-    missingSuspenseWithCSRBug: true,
-  },
 }
 
 export default nextConfig

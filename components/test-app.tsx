@@ -114,9 +114,6 @@ export function TestApp() {
           <Link href="/my-results" className="p-2 hover:bg-muted rounded-md transition-colors" title="Мои результаты">
             <User className="w-5 h-5 text-muted-foreground" />
           </Link>
-          <Link href="/admin" className="p-2 hover:bg-muted rounded-md transition-colors" title="Админ-панель">
-            <Settings className="w-5 h-5 text-muted-foreground" />
-          </Link>
         </div>
       </header>
 

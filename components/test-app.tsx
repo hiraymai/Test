@@ -12,8 +12,9 @@ import { getCorrectAnswers, calculateScore, calculatePercentage } from '@/lib/te
 import { GraduationCap, Settings, Clock } from 'lucide-react'
 import Link from 'next/link'
 import { testDatabase } from '@/lib/database'
+import { Button } from '@/components/ui/button'
 
-type Step = 'register' | 'language' | 'variant' | 'test' | 'results' | 'history'
+type Step = 'register' | 'language' | 'variant' | 'test' | 'results' | 'history' | 'edit'
 
 const TOTAL_QUESTIONS = 25
 
@@ -100,6 +101,35 @@ export function TestApp() {
     setStep('results')
   }
 
+  const handleEditQuestion = (questionIndex: number) => {
+    setCurrentQuestion(questionIndex)
+    setStep('edit')
+  }
+
+  const handleUpdateResults = () => {
+    if (!studentInfo) return
+
+    const correctAnswers = getCorrectAnswers(language, variant)
+    const score = calculateScore(answers, correctAnswers)
+    const percentage = calculatePercentage(score, TOTAL_QUESTIONS)
+
+    const updatedResult: TestResult = {
+      fullName: studentInfo.fullName,
+      groupName: studentInfo.groupName,
+      testDate: studentInfo.testDate,
+      language,
+      variant,
+      score,
+      totalQuestions: TOTAL_QUESTIONS,
+      percentage,
+      answers,
+    }
+
+    testDatabase.saveResult(updatedResult)
+    setResult(updatedResult)
+    setStep('results')
+  }
+
   const handleRestart = () => {
     setStep('register')
     setStudentInfo(null)
@@ -168,6 +198,7 @@ export function TestApp() {
             result={result}
             correctAnswers={getCorrectAnswers(language, variant)}
             onRestart={handleRestart}
+            onEditQuestion={handleEditQuestion}
             language={language}
           />
         )}
@@ -177,6 +208,38 @@ export function TestApp() {
             language={language}
             onSelectTest={handleSelectHistoryTest}
           />
+        )}
+
+        {step === 'edit' && (
+          <div className="w-full max-w-2xl mx-auto">
+            <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-semibold text-blue-900">Режим редактирования</h3>
+                  <p className="text-sm text-blue-700">Вы можете изменить ответы и обновить результат</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setStep('results')}>
+                    Отмена
+                  </Button>
+                  <Button onClick={handleUpdateResults}>
+                    Обновить результат
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <TestQuestion
+              language={language}
+              variant={variant}
+              currentQuestion={currentQuestion}
+              totalQuestions={TOTAL_QUESTIONS}
+              selectedAnswer={answers[currentQuestion]}
+              onSelectAnswer={handleSelectAnswer}
+              onNext={handleNext}
+              onPrevious={handlePrevious}
+              onFinish={handleUpdateResults}
+            />
+          </div>
         )}
       </main>
 

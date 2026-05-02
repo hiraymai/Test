@@ -10,6 +10,7 @@ interface TestResultsProps {
   result: TestResult
   correctAnswers: string[]
   onRestart: () => void
+  onEditQuestion?: (questionIndex: number) => void
   language: 'ru' | 'kz'
 }
 
@@ -20,7 +21,7 @@ interface AnswerStatistics {
   percentage?: number
 }
 
-export function TestResults({ result, correctAnswers, onRestart, language }: TestResultsProps) {
+export function TestResults({ result, correctAnswers, onRestart, onEditQuestion, language }: TestResultsProps) {
   const { grade, color } = getGrade(result.percentage)
   
   // Считаем статистику ответов
@@ -160,11 +161,13 @@ export function TestResults({ result, correctAnswers, onRestart, language }: Tes
               return (
                 <div
                   key={index}
-                  className={`p-3 rounded-lg border-2 text-center ${
+                  className={`p-3 rounded-lg border-2 text-center cursor-pointer transition-all hover:scale-105 hover:shadow-md ${
                     isCorrect 
-                      ? 'border-green-500 bg-green-50 dark:bg-green-950' 
-                      : 'border-red-500 bg-red-50 dark:bg-red-950'
+                      ? 'border-green-500 bg-green-50 dark:bg-green-950 hover:bg-green-100' 
+                      : 'border-red-500 bg-red-50 dark:bg-red-950 hover:bg-red-100'
                   }`}
+                  onClick={() => onEditQuestion?.(index)}
+                  title={`Перейти к вопросу #${index + 1}`}
                 >
                   <div className="text-xs text-muted-foreground mb-1">
                     #{index + 1}

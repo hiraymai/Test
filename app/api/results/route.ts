@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// API route for test results - using localStorage only
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()

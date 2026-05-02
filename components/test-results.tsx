@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { TestResult } from '@/lib/types'
 import { getGrade } from '@/lib/test-data'
-import { CheckCircle, XCircle, RotateCcw } from 'lucide-react'
+import { CheckCircle, XCircle, RotateCcw, BarChart3 } from 'lucide-react'
 
 interface TestResultsProps {
   result: TestResult
@@ -13,8 +13,31 @@ interface TestResultsProps {
   language: 'ru' | 'kz'
 }
 
+interface AnswerStatistics {
+  correct: number
+  incorrect: number
+  skipped: number
+  percentage?: number
+}
+
 export function TestResults({ result, correctAnswers, onRestart, language }: TestResultsProps) {
   const { grade, color } = getGrade(result.percentage)
+  
+  // Считаем статистику ответов
+  const statistics: AnswerStatistics = result.answers.reduce((acc, answer, index) => {
+    if (!answer) {
+      acc.skipped++
+    } else if (answer.toUpperCase() === correctAnswers[index]) {
+      acc.correct++
+    } else {
+      acc.incorrect++
+    }
+    return acc
+  }, { correct: 0, incorrect: 0, skipped: 0 })
+
+  statistics.percentage = result.answers.length > 0 
+    ? Math.round((statistics.correct / (result.answers.length - statistics.skipped)) * 100)
+    : 0
   
   const labels = {
     ru: {
@@ -32,6 +55,8 @@ export function TestResults({ result, correctAnswers, onRestart, language }: Tes
       restart: 'Пройти тест заново',
       yourAnswer: 'Ваш ответ',
       correctAnswer: 'Правильный',
+      statistics: 'Статистика ответов',
+      accuracy: 'Точность'
     },
     kz: {
       title: 'Тест нәтижелері',
@@ -48,6 +73,8 @@ export function TestResults({ result, correctAnswers, onRestart, language }: Tes
       restart: 'Тестті қайта тапсыру',
       yourAnswer: 'Сіздің жауабыңыз',
       correctAnswer: 'Дұрыс жауап',
+      statistics: 'Жауаптар статистикасы',
+      accuracy: 'Дәлділік'
     },
   }
 
@@ -95,12 +122,41 @@ export function TestResults({ result, correctAnswers, onRestart, language }: Tes
 
       <Card>
         <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <BarChart3 className="w-5 h-5" />
+            {t.statistics}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-4 gap-4 text-center mb-4">
+            <div>
+              <div className="text-2xl font-bold text-green-600">{statistics.correct}</div>
+              <div className="text-sm text-muted-foreground">{t.correct}</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-red-600">{statistics.incorrect}</div>
+              <div className="text-sm text-muted-foreground">{t.incorrect}</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-600">{statistics.skipped}</div>
+              <div className="text-sm text-muted-foreground">Пропущено</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-blue-600">{statistics.percentage}%</div>
+              <div className="text-sm text-muted-foreground">{t.accuracy}</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle className="text-lg">{t.answers}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-5 gap-2">
             {result.answers.map((answer, index) => {
-              const isCorrect = answer.toUpperCase() === correctAnswers[index]
+              const isCorrect = answer && answer.toUpperCase() === correctAnswers[index]
               return (
                 <div
                   key={index}
@@ -122,8 +178,9 @@ export function TestResults({ result, correctAnswers, onRestart, language }: Tes
                     <span className="font-semibold">{answer || '-'}</span>
                   </div>
                   {!isCorrect && (
-                    <div className="text-xs text-green-600 mt-1">
-                      {correctAnswers[index]}
+                    <div className="text-xs text-red-600 mt-1">
+                      <div className="font-semibold">{t.correctAnswer}:</div>
+                      <div>{correctAnswers[index]}</div>
                     </div>
                   )}
                 </div>

@@ -69,21 +69,7 @@ export function TestHistory({ language, onSelectTest }: TestHistoryProps) {
 
   const t = labels[language]
 
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString)
-      return date.toLocaleString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    } catch {
-      return dateString
-    }
-  }
-
+  
   if (loading) {
     return (
       <div className="w-full max-w-4xl mx-auto">
@@ -177,10 +163,7 @@ export function TestHistory({ language, onSelectTest }: TestHistoryProps) {
                           </div>
                         </div>
                         
-                        <div className="mt-2 text-xs text-muted-foreground">
-                          {t.createdAt}: {formatDate(result.createdAt || '')}
-                        </div>
-                      </div>
+                                              </div>
                       
                       <div className="flex items-center gap-2">
                         <div className={`px-2 py-1 rounded text-xs font-medium ${

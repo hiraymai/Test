@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { StudentInfo } from '@/lib/types'
-import Link from 'next/link'
 
 interface StudentFormProps {
   onSubmit: (info: StudentInfo) => void
@@ -66,18 +65,6 @@ export function StudentForm({ onSubmit }: StudentFormProps) {
             Продолжить / Жалғастыру
           </Button>
         </form>
-        
-        {/* Кнопка для просмотра результатов */}
-        <div className="mt-4 text-center">
-          <p className="text-sm text-muted-foreground mb-2">
-            Уже проходили тест?
-          </p>
-          <Link href="/my-results">
-            <Button variant="outline" size="sm" className="w-full bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
-              👤 Мои результаты
-            </Button>
-          </Link>
-        </div>
       </CardContent>
     </Card>
   )

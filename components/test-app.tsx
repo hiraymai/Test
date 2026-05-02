@@ -8,7 +8,7 @@ import { TestQuestion } from './test-question'
 import { TestResults } from './test-results'
 import { StudentInfo, TestResult } from '@/lib/types'
 import { getCorrectAnswers, calculateScore, calculatePercentage } from '@/lib/test-data'
-import { GraduationCap, Play, Trophy, RotateCcw, Settings, User } from 'lucide-react'
+import { GraduationCap, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { testDatabase } from '@/lib/database'
 
@@ -26,10 +26,8 @@ export function TestApp() {
   const [result, setResult] = useState<TestResult | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleStudentSubmit = (studentInfo: StudentInfo) => {
-    setStudentInfo(studentInfo)
-    // Сохраняем имя студента в localStorage для личного кабинета
-    localStorage.setItem('studentName', studentInfo.fullName)
+  const handleStudentSubmit = (info: StudentInfo) => {
+    setStudentInfo(info)
     setStep('language')
   }
 
@@ -111,9 +109,8 @@ export function TestApp() {
               <p className="text-xs text-muted-foreground">Дене мәдениеті / Физическая культура</p>
             </div>
           </div>
-          <Link href="/my-results" className="p-2 hover:bg-muted rounded-md transition-colors flex items-center gap-2 bg-blue-50 text-blue-600" title="Мои результаты">
-            <User className="w-5 h-5" />
-            <span className="text-sm font-medium">Мои результаты</span>
+          <Link href="/admin" className="p-2 hover:bg-muted rounded-md transition-colors" title="Результаты">
+            <Settings className="w-5 h-5 text-muted-foreground" />
           </Link>
         </div>
       </header>

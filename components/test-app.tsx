@@ -111,8 +111,9 @@ export function TestApp() {
               <p className="text-xs text-muted-foreground">Дене мәдениеті / Физическая культура</p>
             </div>
           </div>
-          <Link href="/my-results" className="p-2 hover:bg-muted rounded-md transition-colors" title="Мои результаты">
-            <User className="w-5 h-5 text-muted-foreground" />
+          <Link href="/my-results" className="p-2 hover:bg-muted rounded-md transition-colors flex items-center gap-2 bg-blue-50 text-blue-600" title="Мои результаты">
+            <User className="w-5 h-5" />
+            <span className="text-sm font-medium">Мои результаты</span>
           </Link>
         </div>
       </header>

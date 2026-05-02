@@ -73,8 +73,8 @@ export function StudentForm({ onSubmit }: StudentFormProps) {
             Уже проходили тест?
           </p>
           <Link href="/my-results">
-            <Button variant="outline" size="sm" className="w-full">
-              Мои результаты
+            <Button variant="outline" size="sm" className="w-full bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100">
+              👤 Мои результаты
             </Button>
           </Link>
         </div>
